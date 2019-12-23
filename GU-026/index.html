@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Создать два текстовых поля в который будет вводиться координаты места</title>
+    <style>
+
+        #task{
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            border:1px dashed darkgrey;
+            border-radius: 5px;
+            width: 60%;
+            text-align: center;
+        }
+        #task p{
+            font-size: 1.3em;
+            font-weight: normal ;
+        }
+        #task b{
+            font-size: 2em;
+        }
+        body{
+            margin: 0;
+            padding: 0;
+            color:black;
+            background-color: ghostwhite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header{
+            margin-top: 0;
+            width: 100%;
+            height: 50px;
+            background-color: mediumslateblue;
+        }
+        #map {
+            width: 50%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+<header></header>
+<div id="task"><b>Задание</b><p>Создать два текстовых поля в который будет вводиться координаты места по нажатию на кнопки должен устанавливаться маркер на карте.</p></div>
+
+<div class="container-fluid" style="height:90vh;">
+<div class="row justify-content-around">
+    <div class="col-md-4"></div>
+    <div class="col-md-2">
+        <label>Latitude</label>
+        <input type="number" class="form-control" id="latitude">
+    </div>
+    <div class="col-md-2">
+        <label>Longtitude</label>
+        <input type="number" class="form-control" id="longtitude">
+    </div>
+    <div class="col-md-4"></div>
+
+</div>
+
+    <div class="row justify-content-around" style="padding: 20px;">
+        <button class="btn btn-success" id="set-marker-button">Set marker</button>
+    </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+    <div class="col-md-6" id="map"></div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<script>
+    function initMap() {
+        var opt = {
+            center: {lat: 47.836220, lng: 35.106023},
+            zoom: 15,
+        };
+        var map = new google.maps.Map(document.getElementById("map"), opt);
+        var geocoder = new google.maps.Geocoder;
+        var infowindow = new google.maps.InfoWindow;
+
+
+        document.getElementById('set-marker-button').addEventListener('click', function() {
+            geocodeLatLng(geocoder, map, infowindow);
+        });
+    }
+
+    function geocodeLatLng(geocoder, map, infowindow) {
+        var lat = document.getElementById('latitude').value;
+        var lng = document.getElementById('longtitude').value;
+        var latlng = {lat: parseFloat(lat), lng: parseFloat(lng)};
+        geocoder.geocode({'location': latlng}, function(results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    map.setZoom(11);
+                    var marker = new google.maps.Marker({
+                        position: latlng,
+                        map: map
+                    });
+                    infowindow.setContent(results[0].formatted_address);
+                    infowindow.open(map, marker);
+                } else {
+                    window.alert('No results found');
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
+        });
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXZBwQ03KFr5Gc9COrfgcqs0HLzpXIDlY&callback=initMap" async defer></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
